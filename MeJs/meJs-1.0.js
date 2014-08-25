@@ -19,6 +19,10 @@
                 for(var i in obj){ len ++; }
             return len;
         },
+        each: function(arr, callback){
+            for(var i = 0; i < arr.length; i ++)
+                callback(i);
+        },
         filetype: function(doc){
             var suffix = doc.substring(doc.lastIndexOf('.') + 1, doc.length);
             if (/(jpg|png|gif|jpge).?/ig.test(suffix))
@@ -31,7 +35,8 @@
                 return "css";
         },
         copy: function(o, n){
-            this.clone(o, n, true);
+            for (var k in n)
+                o[k] = n[k];
         },
         // _[name] is private function, _ don't clone
         clone: function(o, n, isCopy){
@@ -41,8 +46,8 @@
         //
         newMe: function(o, n){
             var newObj = {}, m = this;
-            n && m.clone(o, n);
-            m.clone(newObj, o);
+            n && m.copy(o, n);
+            m.copy(newObj, o);
             return newObj;
         },
         _init: function(){
@@ -74,6 +79,9 @@
             m.isIE11 = _browser("msie", "11.0");
             m.isOldWebKit = +navigator.userAgent
                 .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536;
+            m.isUrl = function(urlStr){
+                return new RegExp("^((https|http|ftp|rtsp|mms)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$").test(urlStr);
+            }
         }
     }
     me.modularity = {
@@ -86,6 +94,8 @@
             for(var i in nsArr)
                 if (p[ nsArr[i].replace(/\s/g, "") ])
                     p = p[ nsArr[i].replace(/\s/g, "") ];
+                else if (window[ nsArr[i].replace(/\s/g, "") ])
+                    return window[ nsArr[i].replace(/\s/g, "") ];
                 else
                     return null;
             return p;
@@ -99,6 +109,8 @@
         },
         getAlias: function(alias, path){
             var cur = alias, arr = path.split('.');
+            if (cur[arr[arr.length - 1]])
+                return cur[arr[arr.length - 1]];
             while(arr.length){
                 cur = cur[arr[0]];
                 arr.shift();
@@ -125,10 +137,17 @@
                 p = me.plugin;
             if (!curCig)
                 return false;
+
             var curAlias = this.getAlias( curCig.alias, alias );
-            curCig && curAlias.page && arr.push(curCig.url + (curCig.pagesPath || "") + curAlias.page);
-            curCig && curAlias.js && arr.push(curCig.url + (curCig.jsPath || "") + curAlias.js);
-            curCig && curAlias.css && arr.push(curCig.url + (curCig.cssPath || "") + curAlias.css);
+            var curPath = cig.path.substring(0, cig.path.lastIndexOf('/')+1);
+
+            me.fn.isJson(curAlias) && (function() {
+                curCig && curAlias.page && arr.push(curPath + (curCig.pagesPath || "") + curAlias.page);
+                curCig && curAlias.js && arr.push(curPath + (curCig.jsPath || "") + curAlias.js);
+                curCig && curAlias.css && arr.push(curPath + (curCig.cssPath || "") + curAlias.css);
+            })();
+
+            me.fn.isString(curAlias) && arr.push(curPath + curAlias);
             arr.length && p.preloader.newMe({
                 obj:arr,
                 vesion: me.version,
@@ -137,24 +156,32 @@
                 },
                 onError: function(){
                     //typeof callback == "function" && callback(null);
-                    //throw new Error(type+" module:"+" -> config:["+ cig.name +"] ->"+alias+" loading error!");
+                    throw new Error(type+" module:"+" -> config:["+ cig.name +"] ->"+alias+" loading error!");
                 }
             }).loading();
         },
         _templateFun: {
+            params: null,
+            newMe : function (opts) {
+                return me.fn.newMe(this, {params: opts})
+            },
             load: function(name, callback, objAlias){
-                var m = this, c = me.config, mode = me.modularity,configInfo = mode.getConfig(m.name+"."+name);
-                m[name] && typeof callback == "function" && callback(m[name]);
-                !m[name] && (
+                var m = this, c = me.config, mode = me.modularity,configInfo = mode.getConfig(m.name+"."+name),
+                    modeObj = me.modularity.get(m.name + "." + name);
+
+                modeObj && (typeof modeObj.isExtend != "boolean" || modeObj.isExtend) && typeof callback == "function" && callback(m[name]);
+                (!modeObj || !modeObj.isExtend) && !(modeObj && modeObj.isExtend) && (
                         !mode.loadingQueue[configInfo.config.name] && (mode.loadingQueue[configInfo.config.name] =  configInfo.config, mode.loadingQueue[configInfo.config.name].data = []),
                             mode.loadingQueue[configInfo.config.name].data.push({ alias: configInfo.alias, callback: callback, type: m.type, objAlias:objAlias })
                     );
                 return this;
             },
             extend: function (name, opts) {
+
                 var m = this;
-                if (this[name])
-                    throw new Error(this.namespace+"."+name+" existed");
+//                if (this[name])
+//                    return;
+                    //throw new Error(this.namespace+"."+name+" existed");
                 this[name] = opts;
                 var id = ((m[name].id) || name),
                     imports = m[name]["imports"],
@@ -163,11 +190,12 @@
                 m[name]["name"] = name;
                 m[name]["namespace"] = m.namespace+"."+name;
                 m[name].parent = m;
-                me.fn.clone(m[name], this);
+
                 var _inits = function(){
+                    me.fn.clone(m[name], m);
                     typeof m[name].construct  == "function" && m[name].construct();
-                    if (typeof m[name].destruct != "function")
-                        throw new Error(m[name]["namespace"] + " is no realize destruct function.");
+                    m[name].isExtend = true;
+                    window.console.log(m.namespace+"."+name);
                 };
                 var loadImports = function(curList, count){
                     for(var ki in curList){
@@ -203,9 +231,9 @@
         },
         setInterval:function(){
             var m = this;
-            var load = function(cur , i){
+            var load = function(cur){
                 while(cur.data.length) {
-                    m.loadAssembly(cur, cur.data[0].alias, i + "." + cur.data[0].alias, cur.data[0].type, cur.data[0].callback, cur.data[0].objAlias);
+                    m.loadAssembly(cur, cur.data[0].alias, cur.name + "." + cur.data[0].alias, cur.data[0].type, cur.data[0].callback, cur.data[0].objAlias);
                     cur.data.shift();
                 }
             }
@@ -218,12 +246,16 @@
                         async: false,
                         vesion: me.vesion,
                         onComplete: function () {
-                            m.loadingQueue[i].isloading = true;
-                            load(cur, i);
+                            cur.isloading = true;
+                            load(cur);
+                        },
+                        onError: function(){
+                            cur.isloading = true;
+                            throw new Error("File "+cur.path+" loading error.");
                         }
                     }).loading();
                 })(cur);
-                cur.isloading && load(cur, i);
+                cur.isloading && load(cur);
             }
         },
         init: function(){
@@ -258,6 +290,7 @@
                 parent["name"] = arr[i];
                 curNamespace.push(arr[i]);
                 parent["namespace"] = curNamespace.join('.');
+                parent["isExtend"] = false;
             }
             return parent;
         }
@@ -276,11 +309,8 @@
         }
     });
     namespace("me").extend("plugin", {
-            newMe : function (opts) {
-                return me.fn.newMe(this, opts)
-            },
             construct: function(){
-                me.fn.clone(this.preloader, this);
+                this.preloader.newMe = me.modularity._templateFun.newMe;
             },
             preloader: {
                 namespace:"me.plugin.preloader",
@@ -333,9 +363,9 @@
                 },
                 loading: function(opts){
                     var m = this, fn = me.fn, p = m.params;
-                    fn.isArray(m.params.obj) && $(m.params.obj).each(function(){
-                        fn.isString(this) && m.load(this);
-                        fn.isObject(this) && m.load(this.path, this.size);
+                    fn.isArray(m.params.obj) && fn.each(m.params.obj, function(i){
+                        fn.isString(m.params.obj[i]) && m.load(m.params.obj[i]);
+                        fn.isObject(m.params.obj[i]) && m.load(m.params.obj[i].path, m.params.obj[i].size);
                     });
                     return this;
                 },
