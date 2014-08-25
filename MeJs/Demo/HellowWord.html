@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body>
+</body>
+
+<script type="text/javascript" src="../meJs-1.0.js?v=1.10"></script>
+<script>
+    assembly("demo", "config_demo.js");
+    assembly("common", "../common/config_common.js")
+    namespace("qf").extend("page",{
+        construct: function(){
+            typeof this.init == "function" && this.init();
+            typeof this.initEvent == "function" && this.initEvent();
+        },
+        destruct: function(){
+
+        }
+    });
+    namespace("qf.page").extend("hello",{
+        imports:{
+          msg: "demo.plugin.msgBox",
+          "jq": "common.$"
+        },
+        init: function(){
+            this.msg.show("Hello world!!!");
+        }
+    });
+
+
+</script>
+</html>
