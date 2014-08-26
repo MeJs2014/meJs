@@ -119,6 +119,7 @@
             curCls["dependent"] = curCls["dependent"] || [];
             curCls["dependent"].push(namespace);
             this.beDependentCls(this.setCls(namespace), curCls.namespace);
+            this.index = 0;
         },
         beDependentCls: function(curCls, namespace){
             curCls["beDependent"] = curCls["beDependent"] || [];
@@ -253,11 +254,12 @@
                             window[ki].load(ki+"."+cur.alias, function (o, objAlias) {
                                 m[name][objAlias] = o;
                                 var beDep = me.modularity.getCls( m[name].namespace),namespace = m[name].imports[objAlias];
-                                (!o || !o.isMeJs)
-                                    && beDep.dependent.indexOf(namespace) != -1
-                                    && (beDep.index = beDep.index || 0, beDep.index ++)
-                                    && beDep.index == beDep.dependent.length
-                                    && me.modularity._inits(me.modularity.get(beDep.namespace));
+                                if ((!o || !o.isMeJs)
+                                    && beDep.dependent.indexOf(namespace) != -1){
+                                    beDep.index = beDep.index || 0;
+                                    beDep.index ++;
+                                    beDep.index == beDep.dependent.length && me.modularity._inits(me.modularity.get(beDep.namespace));
+                                }
                             }, cur.name);
                         }
                     }
