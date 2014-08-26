@@ -1,0 +1,127 @@
+html, body {
+    _height: 100%;
+}
+*html #sidebarLeft {
+    _height: 100%;
+}
+#sidebarLeft {
+    font: 12px/18px "\5FAE\8F6F\96C5\9ED1", Tahoma, Geneva, sans-serif;
+    min-height: 100%;
+    background: #2a303f;
+    border-right: 1px solid #000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    padding-right: 10px;
+}
+
+#sidebarLeft .sidebar-content{
+    width: 95px;
+    min-height: 100%;
+    background: #2a303f;
+}
+
+#sidebarLeft .sidebar-content .logo{
+    margin: 38px auto 0;
+    height: 63px;
+    text-align: center;
+    background: #12151f;
+}
+#sidebarLeft .sidebar-content .herd{
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    color: #4d515b;
+    background: #202532;
+}
+#sidebarLeft .sidebar-content .leftBtn{
+    height: 215px;
+    padding-top: 15px;
+}
+#sidebarLeft .leftBtn .btnUl{
+    margin: 0 auto;
+    width: 91px;
+    padding: 0;
+}
+#sidebarLeft .btnUl li{
+    padding: 5px 0;
+}
+#sidebarLeft .btnUl li a{
+    display: block;
+    width: 91px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: #fff;
+    background: url("../../../i/playgame/sidebarLeft/leftBtn.png") no-repeat;
+    text-decoration: none;
+}
+#sidebarLeft .btnUl li a:hover{
+    text-decoration: underline;
+}
+
+#sidebarLeft .sidebar-content .leftHref{}
+#sidebarLeft .leftHref .herfUl{
+    padding: 0;
+    margin: 0;
+}
+#sidebarLeft .herfUl li{
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-bottom: 1px solid #2a303f;
+}
+.herfUl .liBg{
+    background: #12151f;
+}
+#sidebarLeft .herfUl li a{
+    color: #5c7c9e;
+    text-decoration: none;
+}
+#sidebarLeft .herfUl li a:hover{
+    text-decoration: underline;
+}
+#sidebarLeft .sidebar-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 998;
+    width: 10px;
+    height: 100%;
+    min-height: 100%;
+    background: #12151f;
+}
+
+#sidebarLeft .sidebar-toggle a {
+    width: 6px;
+    height: 56px;
+    overflow: hidden;
+    text-indent: -999px;
+    position: absolute;
+    top: 50%;
+    margin-top: -28px;
+    right: 0;
+    z-index: 998;
+    background: url(../../../i/playgame/sidebarLeft/sider-menu.png) no-repeat 0 0;
+    display: inline-block;
+}
+#sidebarLeft .sidebar-toggle-menu a{
+    background: url(../../../i/playgame/sidebarLeft/sider-menu.png) no-repeat -6px 0;
+}
+#sidebarLeft .logo .btnLog {
+    display: inline-block;
+    width: 95px;
+    height: 63px;
+    text-indent: 0;
+    background: none;
+}
+#sidebarLeft .ad {
+    padding-top: 10px;
+    display: block;
+    overflow: hidden;
+}
+#sidebarLeft .ad img {
+    display: block;
+    margin: auto;
+}

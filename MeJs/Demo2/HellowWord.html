@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body>
+</body>
+<script type="text/javascript" src="../meJs-1.0.js?v=1.10"></script>
+<script>
+    assembly("demo", "config_demo.js");
+    assembly("common", "../common/config_common.js")
+    namespace("qf").extend("page",{
+        construct: function(){
+            typeof this.init == "function" && this.init();
+            typeof this.initEvent == "function" && this.initEvent();
+            me.setIntervalList.push(this);
+        },
+        destruct: function(){
+
+        }
+    });
+    namespace("qf.page").extend("hello",{
+        setIntervalSec:500,
+        _secIndex: 0,
+        _helloworld:"Hello world...",
+        imports:{
+          msg: "demo.plugin.msgBox",
+          print:"demo.plugin.print",
+          $:"common.jQuery1"
+        },
+        init: function(){
+            var m = this;
+            m.msg.show("Hello world");
+            $("body").html("Hello world");
+        },
+        setInterval: function(){
+            if (this._helloworld.length < this._secIndex)
+                this._secIndex = 0;
+            this.print.exec(this._helloworld.substr(0, ++this._secIndex));
+        }
+    });
+
+</script>
+</html>

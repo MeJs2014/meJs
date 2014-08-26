@@ -1,0 +1,35 @@
+#playgameMsg{
+    font: 12px/18px "\5FAE\8F6F\96C5\9ED1", Tahoma, Geneva, sans-serif;
+    position: absolute;
+    width: 219px;
+    height: 153px;
+    background: url("../../../i/playgame/message/fc_bg.png") no-repeat;
+    _background: url("../../../i/playgame/message/fcIe6_bg.png") no-repeat;
+    z-index: 9999;
+}
+#playgameMsg p{
+    margin: 0;
+    padding: 0;
+}
+#playgameMsg .close{
+    position: absolute;
+    right: 40px;
+    top: 20px;
+    width: 30px;
+    height: 17px;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: url("../../../i/playgame/message/close_bg.png") no-repeat;
+    _background: url("../../../i/playgame/message/closeIe6_bg.png") no-repeat;
+}
+#playgameMsg .cotP{
+    position: absolute;
+    left: 25px;
+    top: 45px;
+    width: 180px;
+    color: #8ec1f3;
+}
+#playgameMsg .cotP p a{
+    font-weight: bold;
+    color: #ffba00;
+}

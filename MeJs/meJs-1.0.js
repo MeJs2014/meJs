@@ -5,7 +5,7 @@
  * */
 (function(){
     me = {
-        vesion:1.1,
+        vesion:1.0,
         isDebug: true,
         isFuture:false,
         setIntervalList:[],
@@ -42,6 +42,10 @@
         clone: function(o, n, isCopy){
             for (var k in n)
                 (k.indexOf("_") != 1 || isCopy) && !o[k] && (o[k] = n[k]);
+        },
+        inherit: function(o, n){
+            for (var k in n)
+                (k.indexOf("_") != 1 && (!n[k] || !n[k].namespace || n[k].namespace != o.namespace)) && !o[k] && (o[k] = n[k]);
         },
         //
         newMe: function(o, n){
@@ -82,19 +86,50 @@
             m.isUrl = function(urlStr){
                 return new RegExp("^((https|http|ftp|rtsp|mms)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$").test(urlStr);
             }
+            typeof Array.prototype.indexOf != "function" && (Array.prototype.indexOf = function(obj){
+                for (var i = 0; i < this.length; i ++)
+                    if (this[i] == obj)
+                        return i;
+            });
         }
     }
     me.modularity = {
         loadingQueue:{},
         commonParam:{},
-        nameSpanceRegex: /([a-z,A-Z](\w+|\w?))(\s)/ig,
-        clsNameRegex: /^([a-z]|[A-Z]){1}\w?/ig,
-        get: function(namespance){
-            var nsArr = this.getNameSpance(namespance), p = window;
-            for(var i in nsArr)
+        namespaceRegex: /(\w+|\w?)(\s)/ig,
+        clsNameRegex: /^\w?/ig,
+        clsTable:{},
+        setCls: function(namespace){
+            var arr = namespace.split('.'), fn = me.fn, cur = this.clsTable;
+            fn.each(arr, function(i){
+                cur[arr[i]] = cur[arr[i]] || {};
+                cur = cur[arr[i]];
+            });
+            cur["namespace"] = namespace;
+            return cur;
+        },
+        getCls: function(namespace){
+            var arr = namespace.split('.'), fn = me.fn, cur = this.clsTable;
+            fn.each(arr, function(i){
+                cur = cur[arr[i]];
+            });
+            return cur;
+        },
+        dependentCls: function(curCls, namespace){
+            curCls["dependent"] = curCls["dependent"] || [];
+            curCls["dependent"].push(namespace);
+            this.beDependentCls(this.setCls(namespace), curCls.namespace);
+        },
+        beDependentCls: function(curCls, namespace){
+            curCls["beDependent"] = curCls["beDependent"] || [];
+            curCls["beDependent"].push(namespace);
+        },
+        get: function(namespace){
+            var nsArr = this.getnamespace(namespace), p = window;
+            for (var i = 0; i < nsArr.length; i ++)
                 if (p[ nsArr[i].replace(/\s/g, "") ])
                     p = p[ nsArr[i].replace(/\s/g, "") ];
-                else if (window[ nsArr[i].replace(/\s/g, "") ])
+                else if (i == 1 && window[ nsArr[i].replace(/\s/g, "") ])
                     return window[ nsArr[i].replace(/\s/g, "") ];
                 else
                     return null;
@@ -117,16 +152,16 @@
             }
             return cur;
         },
-        getNameSpance: function(namespance){
-            if (!namespance)
-                throw new Error("Namespance can't empty.");
-            var len = namespance.match(/\./g).length;
-            namespance = namespance.replace(/\./g," ")+" ";
-            var nameArr = namespance.match(this.nameSpanceRegex);
+        getnamespace: function(namespace){
+            if (!namespace)
+                throw new Error("namespace can't empty.");
+            var len = namespace.match(/\./g).length;
+            namespace = namespace.replace(/\./g," ")+" ";
+            var nameArr = namespace.match(this.namespaceRegex);
             if (len == nameArr.length - 1)
                 return nameArr;
             else
-                throw new Error("Namespance:format mistake:"+namespance);
+                throw new Error("Namespace:format mistake:"+namespace);
         },
         isClsName: function(name){
             return this.clsNameRegex.test(name);
@@ -160,29 +195,44 @@
                 }
             }).loading();
         },
+        _inits : function(obj){
+            //me.fn.inherit(obj, obj.parent);
+            typeof obj.construct  == "function" && obj.construct();
+            var cur = me.modularity.getCls(obj.namespace);
+            cur.beDependent && me.fn.each(cur.beDependent, function(i){
+                var beDep = me.modularity.getCls(cur.beDependent[i]);
+                if ( beDep.dependent.indexOf(cur.namespace) != -1 ){
+                    beDep.index = beDep.index || 0;
+                    beDep.index ++;
+                    if (beDep.dependent.length == beDep.index)
+                        me.modularity._inits(me.modularity.get(beDep.namespace));
+                }
+            });
+        },
         _templateFun: {
             params: null,
             newMe : function (opts) {
                 return me.fn.newMe(this, {params: opts})
             },
             load: function(name, callback, objAlias){
-                var m = this, c = me.config, mode = me.modularity,configInfo = mode.getConfig(m.name+"."+name),
-                    modeObj = me.modularity.get(m.name + "." + name);
+                var m = this, c = me.config, mode = me.modularity,configInfo = mode.getConfig(name),
+                    modeObj = me.modularity.get(name);
 
-                modeObj && (typeof modeObj.isExtend != "boolean" || modeObj.isExtend) && typeof callback == "function" && callback(m[name]);
-                (!modeObj || !modeObj.isExtend) && !(modeObj && modeObj.isExtend) && (
+                modeObj && typeof callback == "function" && callback(modeObj);
+                !modeObj && (
                         !mode.loadingQueue[configInfo.config.name] && (mode.loadingQueue[configInfo.config.name] =  configInfo.config, mode.loadingQueue[configInfo.config.name].data = []),
                             mode.loadingQueue[configInfo.config.name].data.push({ alias: configInfo.alias, callback: callback, type: m.type, objAlias:objAlias })
                     );
                 return this;
             },
-            extend: function (name, opts) {
 
+            extend: function (name, opts) {
+                var cls = me.modularity.setCls(this.namespace +"."+ name);
+                cls["dependent"] = cls["dependent"] || [];
                 var m = this;
-//                if (this[name])
-//                    return;
-                    //throw new Error(this.namespace+"."+name+" existed");
-                this[name] = opts;
+                this[name] = this[name] || opts;
+                me.fn.clone(this[name] , opts);
+                me.fn.inherit(this[name], this);
                 var id = ((m[name].id) || name),
                     imports = m[name]["imports"],
                     isUseImport = me.fn.isJson(imports);
@@ -190,40 +240,40 @@
                 m[name]["name"] = name;
                 m[name]["namespace"] = m.namespace+"."+name;
                 m[name].parent = m;
+                m[name]["isMeJs"] = true;
 
-                var _inits = function(){
-                    me.fn.clone(m[name], m);
-                    typeof m[name].construct  == "function" && m[name].construct();
-                    m[name].isExtend = true;
-                    window.console.log(m.namespace+"."+name);
-                };
                 var loadImports = function(curList, count){
                     for(var ki in curList){
                         if (!me.config.assemblies[ki])
                             throw new Error("Assemblies:"+ki+" not defind");
+
                         !window[ki] && namespace(ki);
                         for(var ck = 0; ck < curList[ki].length; ck ++) {
                             var cur = curList[ki][ck];
-                            window[ki].load(cur.alias, function (o, objAlias) {
+                            window[ki].load(ki+"."+cur.alias, function (o, objAlias) {
                                 m[name][objAlias] = o;
-                                count--;
-                                !count && _inits();
+                                var beDep = me.modularity.getCls( m[name].namespace),namespace = m[name].imports[objAlias];
+                                (!o || !o.isMeJs)
+                                    && beDep.dependent.indexOf(namespace) != -1
+                                    && (beDep.index = beDep.index || 0, beDep.index ++)
+                                    && beDep.index == beDep.dependent.length
+                                    && me.modularity._inits(me.modularity.get(beDep.namespace));
                             }, cur.name);
                         }
                     }
                 }
                 isUseImport && function (){
-                    var curList = {}, count = 0;
+                    var curList = {};
                     for(var k in imports){
+                        me.modularity.dependentCls(cls,imports[k]);
                         var arr = imports[k].split('.'), assembly = arr[0];
                         arr.shift();
                         !curList[assembly] && (curList[assembly] = new Array());
                         curList[assembly] && curList[assembly].push( { alias: arr.join('.'), name:k } );
-                        count ++;
                     }
-                    loadImports(curList, count);
+                    loadImports(curList);
                 }();
-                !isUseImport && _inits();
+                !isUseImport &&  me.modularity._inits(m[name]);
             }
         },
         register: function(modularity){
@@ -290,8 +340,8 @@
                 parent["name"] = arr[i];
                 curNamespace.push(arr[i]);
                 parent["namespace"] = curNamespace.join('.');
-                parent["isExtend"] = false;
             }
+            me.modularity.setCls(name);
             return parent;
         }
         return analyzeNamespace(name);

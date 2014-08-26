@@ -1,0 +1,300 @@
+@charset "utf-8";
+/* headtop css */
+#header_9211 a,
+#header9211_allGefc a {
+    text-decoration: none;
+}
+#header_9211 ol,
+#header_9211 ul,
+#header_9211 li,
+#header9211_allGefc ol,
+#header9211_allGefc ul,
+#header9211_allGefc li{
+    list-style: none;
+    list-style-image: none;
+    margin: 0;
+    padding: 0;
+}
+#header_9211 p {
+    margin: 0;
+}
+#header_9211 {
+    font-size: 12px;
+    color: #616161;
+    font-family: \5FAE\8F6F\96C5\9ED1;
+    background: url("../../i/header/top_bg.png") repeat-x;
+}
+#header_9211 .main {
+    margin: 0 auto;
+    width: 980px;
+    height: 34px;
+    position: relative;
+}
+#header_9211 .topLeft,
+#header_9211 .topRight,
+#header_9211 .games {
+    position: absolute;
+    top: 0;
+    z-index: 9;
+}
+#header_9211 .topLeft {
+    left: 4px;
+}
+#header_9211 .topRight {
+    right: 120px;
+}
+#header_9211 .games {
+    top: 3px;
+    right: 4px;
+}
+#header_9211 .userNumber,
+#header_9211 .topUl {
+    float: left;
+    line-height: 33px;
+}
+#header_9211 .userNumber {
+    padding-right: 20px;
+}
+#header_9211 .userNumber strong {
+    color: #e74242;
+}
+#header_9211 .topUl li {
+    float: left;
+    padding-right: 23px;
+    line-height: 33px;
+}
+#header_9211 .rightUl li {
+    padding-right: 13px;
+}
+#header_9211 .topUl li a,
+#header_9211 .games a,
+#header_9211 .gamesUp a,
+#header_9211 .gamesDown a,
+#header_9211 .topRight p,
+#header9211_allGefc .allGe {
+    float: left;
+    height: 33px;
+    line-height: 33px;
+    _line-height: 34px;
+    color: #666666;
+    padding-left: 17px;
+    background-image: url("../../i/header/ico_top.png");
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+#header_9211 .topUl li a:hover,
+#header_9211 .games a:hover,
+#header_9211 .topRight .auser {
+    color: #2da5da;
+}
+#header_9211 .topRight .quit {
+    color: #666;
+    text-decoration: underline;
+}
+#header_9211 .quit:hover {
+    color: #2da5da;
+}
+#header_9211 .mail {
+    color: #666;
+}
+#header_9211 .mail:hover {
+    color: #2da5da;
+}
+#header_9211 .mail span {
+    display: inline-block;
+    background: url("../../i/header/ico_top.png?v=1") 0 -577px no-repeat;
+    padding: 0 2px 0 15px;
+}
+#header_9211 .mailPost {
+    color: #ff5011;
+}
+#header_9211 .mailPost span {
+    background: url("../../i/header/ico_top.png?v=1") 0 -609px no-repeat;
+}
+#header_9211 .leftUl .lim01 a {
+    background-position: 0 12px;
+}
+#header_9211 .leftUl .lim02 a {
+    background-position: 0 -57px;
+}
+#header_9211 .leftUl .lim03 a {
+    background-position: 0 -129px;
+}
+#header_9211 .leftUl .lim04 a {
+    background-position: 0 -506px;
+}
+#header_9211 .leftUl .lim01 a:hover {
+    background-position: 0 -23px;
+}
+#header_9211 .leftUl .lim02 a:hover {
+    background-position: 0 -92px;
+}
+#header_9211 .leftUl .lim03 a:hover {
+    background-position: 0 -164px;
+}
+#header_9211 .leftUl .lim04 a:hover {
+    background-position: 0 -542px;
+}
+#header_9211 .rightUl .lim01 a {
+    background-position: 0 -199px;
+    margin-right: 13px;
+}
+#header_9211 .rightUl .lim02 a {
+    background-position: 0 -269px;
+}
+#header_9211 .rightUl .lim01 a:hover {
+    background-position: 0 -234px;
+}
+#header_9211 .rightUl .lim02 a:hover {
+    background-position: 0 -304px;
+}
+#header_9211 .games a {
+    width: 91px;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 10px;
+    background-position: 0 -355px;
+}
+#header_9211 .gamesUp a {
+    width: 91px;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 10px;
+    background-position: 0 -355px;
+}
+#header_9211 .gamesDown a {
+    width: 91px;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 10px;
+    background-position: 0 -381px;
+}
+#header_9211 .topRight p {
+    background-position: 0 -199px;
+}
+/* headtop allGefc css */
+#header9211_allGefc {
+    font-size: 12px;
+    font-family: \5FAE\8F6F\96C5\9ED1;
+    position: absolute;
+    width: 380px;
+    padding: 15px 0;
+    border: 1px solid #2da5da;
+    background: #fff;
+    z-index: 9999;
+}
+#header9211_allGefc img{
+    border: 0px;
+}
+#header9211_allGefc .hotGameWrap .hotGameText {
+    float: left;
+    padding-left: 25px;
+    padding-right: 15px;
+    height: 38px;
+    line-height: 38px;
+    color: #858f9c;
+    font-size: 14px;
+    font-weight: bold;
+}
+#header9211_allGefc .hotGameWrap .hotGameImg li {
+    float: left;
+    width: 70px;
+    padding-bottom: 10px;
+    padding-right: 13px;
+    text-align: center;
+}
+#header9211_allGefc .hotGameWrap .hotGameImg img {
+    padding-bottom: 5px;
+}
+#header9211_allGefc .hotGameWrap .hotGameImg li a {
+    color: #333;
+    text-decoration: none;
+}
+#header9211_allGefc .hotGameWrap .hotGameImg li a:hover {
+    color: #2da5da;
+}
+#header9211_allGefc .tabFc {
+    width: 353px;
+    margin: 0 auto;
+    border: 1px solid #d5d4d4;
+}
+#header9211_allGefc .tabFc th {
+    background: #ececec;
+    border: 1px solid #d5d4d4;
+}
+#header9211_allGefc .tabFc th a {
+    color: #858f9c;
+    font-size: 14px;
+    text-align: center;
+    width: 97px;
+    height: 30px;
+    line-height: 30px;
+}
+#header9211_allGefc .tabFc th a:hover {
+    text-decoration: none;
+    color: #2da5da;
+}
+.tabFc td {
+    border: 1px solid #d5d4d4;
+    background: #f8f8f8;
+    color: #858f9c;
+    font-weight: bold;
+}
+#header9211_allGefc .tabFc td a {
+    display: block;
+    width: 97px;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 20px;
+    color: #333;
+    background: url("../../i/header/toolbarHeaderIco_black.jpg") 10px 14px no-repeat;
+}
+#header9211_allGefc .tabFc td a:hover {
+    color: #2da5da;
+    text-decoration: none;
+    background: url("../../i/header/toolbarHeaderIco_blue.jpg") 10px 14px no-repeat;
+}
+#header9211_allGefc .tabFc td span.hotIco_H {
+    width: 97px;
+    height: 30px;
+    display: block;
+    background: url("../../i/header/toolbarHeader_13.jpg") 80px 11px no-repeat;
+}
+#header9211_allGefc .tabFc td span.hotIco_N {
+    width: 97px;
+    height: 30px;
+    display: block;
+    background: url("../../i/header/toolbarHeader_16.jpg") 80px 11px no-repeat;
+}
+#header9211_allGefc .tabFc td a.hotMore {
+    color: #848484;
+    background: none;
+}
+#header9211_allGefc .tabFc td a:hover.hotMore {
+    color: #2da5da;
+    background: none;
+}
+
+/*tier css*/
+.tier{ position:absolute; width:570px; border:1px solid #ccc; padding-bottom:40px; background:#fff; z-index:9;}
+.tier .close{ position:absolute; right:0; top:0; display:block; width:40px; height:39px; text-indent:-999px; overflow:hidden; outline:none; background:url(../../i/header/close.gif) center top no-repeat;}
+.tier .titHd{ height:39px; line-height:39px; border-bottom:1px solid #2da5da;}
+.titHd span{ font-size:24px; color:#2da5da; padding-left:15px;}
+.tier .cotp{ padding:40px 80px;}
+.tier .cotp02{ padding:30px 50px;}
+.tier p{ font-size:14px; color:#808080; line-height:25px;}
+.tier .redp,.tabs .redts{ color:#ff0000;}
+.tier .tabs{ margin:0 auto;}
+.tabs td{ height:25px; line-height:25px;}
+.tabs .txtzh{ height:25px; line-height:25px; width:255px; border:1px solid #ccc; text-indent:2px;}
+.tier .btn{ text-align:center; padding-top:20px;}
+.btn .confirm{ display:inline-block; width:123px; height:40px; line-height:40px; text-align:center; font-size:24px; color:#fff; outline:none; background:#2892bf;}
+.btn .confirm:hover{ text-decoration:none; background:#2da5da;}
+.btn .create{ position:absolute; margin:10px 0 0 10px; font-size:14px; color:#44abdc;}
+
+
+.rtertier{ position:absolute; width:388px; padding-bottom:20px; border:1px solid #ccc; background:#f9f9f9; z-index:9;}
+.rtertier .close{ position:absolute; right:7px; top:7px; display:block; width:25px; height:25px; text-indent:-999px; overflow:hidden; outline:none; background:url(../../i/header/close02.gif) center top no-repeat;}
+.rtertier .hdtit{ border-bottom: 5px solid #2da5da;}
+.hdtit strong{ display: block; height: 45px; line-height: 43px; font-size: 24px; color: #2da5da; background: url("../../i/header/ico_dl.png") 5% center no-repeat; padding-left: 50px;}
+.rtertier .loginCot{ float:left; width:388px;}

@@ -1,0 +1,53 @@
+@charset "utf-8";
+/* tools_top css */
+#gameplayheader{ width: 100%; font:12px/18px "\5FAE\8F6F\96C5\9ED1",Tahoma, Geneva, sans-serif; color:#b3b3b3; background:url(../../../i/playgame/header/topbg_box.png) left top repeat-x; position: absolute; left: 0; top: 0; z-index: 9999}
+#gameplayheader p {margin: 0}
+#gameplayheader a { text-decoration: none }
+#gameplayheader .tools_top{ height:38px; line-height:38px; background:url(../../../i/playgame/header/topbg_left.png) left top no-repeat; overflow:hidden;}
+#gameplayheader .tools_top .topLeft{ float:left; padding-left:15px;}
+#gameplayheader .topLeft .logo{ float:left; width:101px; padding:7px 0 0 0;}
+#gameplayheader .logo a{ display:block; width:101px; height:30px; text-indent:-9999px; overflow:hidden; outline:none; background:url(../../../i/playgame/header/9211log.png) no-repeat; _background: url("../../../i/playgame/header/9211logIe6.png")}
+#gameplayheader .topLeft .game_name{ float:left; width:200px; text-align:center;}
+#gameplayheader .game_name a,.topRight .spHy,.mail span{ color: #b7b6b6; background: url("../../../i/playgame/header/ico_bg.png") no-repeat; padding-left: 16px}
+#gameplayheader .game_name a:hover{text-decoration: underline;}
+#gameplayheader .game_name .btnSc{ background-position: 0 3px;}
+#gameplayheader .game_name .btnZm{ background-position: 0 -25px;}
+#gameplayheader .topLeft .notice{ float:left; width:305px; height:22px; line-height:22px; border:1px solid #404553; background-color:#1d212d; margin-top:7px;}
+#gameplayheader .noticeHd{ margin:0 auto; width:285px; height:20px; padding-top:1px; color:#d85757; overflow:hidden;}
+#gameplayheader .noticeHd a{ color:#d85757;}
+#gameplayheader .noticeHd a:hover{ text-decoration: underline;}
+#gameplayheader .noticeHd span{ float:left; line-height:21px;}
+#gameplayheader .noticeHd marquee{ float:left;}
+
+#gameplayheader .tools_top .topRight{ float:right; }
+#gameplayheader .topRight p,#gameplayheader .topRight .rkVa,#gameplayheader .sxbtn,.sqbtn{ float:left;}
+#gameplayheader .topRight p{ padding-right:10px;}
+#gameplayheader .topRight .spHy{ background-position: 0 -54px;}
+#gameplayheader .topRight .urName{ color:#2da5da;}
+#gameplayheader .topRight .divLine{ float: left; height: 38px; border-right: 1px solid #404553; margin: 0 10px}
+#gameplayheader .topRight .btnSq {width: 17px;height: 38px;background: url("../../../i/playgame/header/btnSq_bg.png") center no-repeat; float: left; margin-right: 10px;}
+#gameplayheader .urName:hover{ text-decoration:underline;}
+#gameplayheader .rkVa{ width:17px; margin-top:12px; cursor: pointer;}
+#gameplayheader .rkVa em{ float:left; width:17px; height:13px;}
+#gameplayheader .rkVa .btnV0{ background: url(../../../i/playgame/header/V0.gif);}
+#gameplayheader .rkVa .btnV1{ background: url(../../../i/playgame/header/V1.gif);}
+#gameplayheader .rkVa .btnV2{ background: url(../../../i/playgame/header/V2.gif);}
+#gameplayheader .rkVa .btnV3{ background: url(../../../i/playgame/header/V3.gif);}
+#gameplayheader .rkVa .btnV4{ background: url(../../../i/playgame/header/V4.gif);}
+#gameplayheader .rkVa .btnV5{ background: url(../../../i/playgame/header/V5.gif);}
+#gameplayheader .rkVa .btnV6{ background: url(../../../i/playgame/header/V6.gif);}
+#gameplayheader .rkVa .btnV7{ background: url(../../../i/playgame/header/V7.gif);}
+#gameplayheader .rkVa .btnV8{ background: url(../../../i/playgame/header/V8.gif);}
+#gameplayheader .rkVa .btnV9{ background: url(../../../i/playgame/header/V9.gif);}
+#gameplayheader .rkVa .btnV10{ background: url(../../../i/playgame/header/V10.gif);}
+#gameplayheader .rkVa .btnV11{ background: url(../../../i/playgame/header/V11.gif);}
+#gameplayheader .rkVa .btnV12{ background: url(../../../i/playgame/header/V12.gif);}
+#gameplayheader .rkVa .btnV13{ background: url(../../../i/playgame/header/V13.gif);}
+#gameplayheader .mail {color: #666; float: left}
+#gameplayheader .mail:hover {text-decoration: underline;}
+#gameplayheader .mail span {display: inline-block;background: url("../../../i/playgame/header/ico_bg.png") 0 -83px no-repeat;padding: 0 2px 0 15px;}
+#gameplayheader .mailPost {color: #ff5011;}
+#gameplayheader .mailPost span {background: url("../../../i/playgame/header/ico_bg.png") 0 -127px no-repeat;}
+#gameplayheader .topUp {color: #b7b6b6;background: url("../../../i/playgame/header/topUp.png") left center no-repeat;padding-left: 13px;margin-left: 5px; float: left;}
+#gameplayheader .tools_open{height: 5px;overflow: hidden;background: url(../../../i/playgame/header/openbg.png) left top repeat-x;cursor: pointer; display:none;}
+#gameplayheader .tools_open .arrow {margin: 0 auto;display: block;width: 11px;height: 5px;overflow: hidden;background: url(../../../i/playgame/header/btnZk_bg.png)  no-repeat;}

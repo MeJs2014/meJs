@@ -7,7 +7,6 @@
 </head>
 <body>
 </body>
-<script type="text/javascript" src="../common/lib/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../meJs-1.0.js?v=1.10"></script>
 <script>
     assembly("demo", "config_demo.js");
@@ -16,24 +15,32 @@
         construct: function(){
             typeof this.init == "function" && this.init();
             typeof this.initEvent == "function" && this.initEvent();
+            me.setIntervalList.push(this);
         },
         destruct: function(){
 
         }
     });
     namespace("qf.page").extend("hello",{
+        setIntervalSec:500,
+        _secIndex: 0,
+        _helloworld:"Hello world...",
         imports:{
-          msg: "demo.plugin.msgBox",
-          $:"common.jQuery",
-          print:"demo.plugin.print"
+          msg: "demo.plugin.msg",
+          $:"common.jQuery1"
         },
         init: function(){
-            this.msg.show("Hello world");
-            this.$("body").html("Hello world");
-            this.print.exec("Hello world");
+            var m = this;
+            m.msg.show("Hello world");
+            $("body").html("Hello world");
+        },
+        setInterval: function(){
+            var m = this;
+            if (m._helloworld.length < m._secIndex)
+                m._secIndex = 0;
+            m.msg.print.exec(m._helloworld.substr(0, ++m._secIndex));
         }
     });
-
 
 </script>
 </html>

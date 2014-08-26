@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head>
+
+    <style>
+        body {margin: 0}
+    </style>
+</head>
+<body id="index">
+</body>
+<script type="text/javascript" src="../common/lib/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../meJs-1.0.js"></script>
+<script type="text/javascript" src="OpenJsApi-2.0.js?v=1.11"></script>
+<script type="text/javascript">
+    //qf.config.url = "";
+    //qf.isDebug = true;
+    var gameId = "1000029";
+//    qf.component.setParameters({
+//        uid: 424681255,
+//        username: 'kslong',
+//        gameId:'1000054',
+//        serverId:5,
+//        vipLevel: 10
+//    }).init("9211.playgame.header").init("9211.playgame.sidebarLeft", function(c){
+//        c.build({
+//            sidebarEventCallback: function(s){
+//                $(".playcontent").css({ "margin-top":36, "margin-left": c.o().width() + 10, height:$(window).height() - 40 });
+//            },
+//            hrefList: [{ name: "游戏官网", href: "" }
+//                , { name: "新手攻略", href: "" }
+//                , { name: "精彩活动", href: (gameId == "1000029" ? "http://act.car.9211.com/201408FiveInOneMain/" : "http://www.9211.com/Activity") }
+//                , { name: "游戏论坛", href: "http://bbs.9211.com" }
+//                , { name: "联系客服", href: "http://service.9211.com"}],
+//            adList:[{ imgUrl:"http://static.7fgame.com/webGameFiles/web2/www.9211.com/images/playgame/playgameAd_1000029.jpg", href:"http://act.car.9211.com/201408FiveInOneMain/" }]
+//        });
+//        $(".playcontent").css({ "margin-top":36, "margin-left": c.o().width() + 10, height:$(window).height() - 40 });
+//    }).init("9211.playgame.message", function(c){
+//        c.build({
+//            left: 100,
+//            top:300
+//        });
+//    }).init("9211.playgame.onlinePlayer");
+
+    qf.component.init("9211.header", function(c){
+        c.build({
+            uid:55555,
+            username:"aaaaaa",
+            msgNum:10
+        });
+}).init("9211.footer");
+
+
+</script>
+<!--<script>-->
+    <!--(function(){-->
+        <!--var s = document.createElement('script');-->
+        <!--s.type = 'text/javascript';-->
+        <!--s.charset="utf-8"-->
+        <!--s.async = true;-->
+        <!--s.src = "http://static.7fgame.com/webGameFiles/web2/OpenJsApi/OpenJsApi-1.0.js";-->
+        <!--s.onload = s.onreadystatechange = function(){-->
+            <!--this.onerror = this.onabort = this.onload = null;-->
+            <!--qf.component.init("9211.header", function(c){-->
+                <!--c.build({-->
+                    <!--uid:55555,-->
+                    <!--username:"aaaaaa",-->
+                    <!--msgNum:10-->
+                <!--});-->
+            <!--}).init("9211.footer");-->
+        <!--};-->
+        <!--var  firstScript = document.getElementsByTagName('script')[0];-->
+        <!--firstScript.parentNode.insertBefore(s, firstScript);-->
+    <!--})();-->
+<!--</script>-->
+</html>
