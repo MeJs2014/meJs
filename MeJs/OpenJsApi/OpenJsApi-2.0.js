@@ -1,8 +1,16 @@
 assembly("common", "../common/config_common.js");
 assembly("9211", "9211/config_9211.js");
+namespace("qf").extend("fn", {
+    copy: function(o, n){
+        me.fn.copy(o, n);
+    },
+    construct: function(){
+        me.fn.clone(this, me.fn);
+    }
+});
 namespace("qf.fn").extend("ajax", {
     imports:{
-        $:"common.jQuery1"
+        $:"common.jQuery"
     },
     construct: function(){
         var m = this, ajax = function(type, datatype){
@@ -29,14 +37,20 @@ namespace("qf.fn").extend("ajax", {
 namespace("qf").extend("component", {
     setIntervalSec:100,
     imports:{
-        $:"common.jQuery1"
+        $:"common.jQuery"
     },
-    _queue:[],
+    _queue:{},
+    params: null,
+    index:0,
+    setParameters:function(opts){
+        this.params = opts;
+        return this;
+    },
     init: function(code, callback){
         var m = this;
-        m._queue = m._queue || [];
-        m._queue.push({ code: code, callback:callback });
-
+        m.load(code, function(){
+            m._queue[code] = callback;
+        });
         return this;
     },
     construct: function(){
@@ -45,17 +59,11 @@ namespace("qf").extend("component", {
             return xpath ? $("#"+ m.id).find(xpath) : $("#"+ m.id);
         }
         if (m.namespace != qf.component.namespace) {
+            me.fn.copy( m.params, this.parent.params );
             typeof m.init == "function" && m.init(m["o"]);
             typeof m.initEvent == "function" && m.initEvent(m["o"]);
             typeof m.setInterval == "function" && me.setIntervalList.push(this);
-        }
-    },
-    setInterval: function(){
-        var m = this;
-        for(var i = 0; i < m._queue.length; i ++){
-            this.load(m._queue[i].code, function(){
-                typeof m._queue[i].callback == "function" && m._queue[i].callback(m[m._queue[i].code]);
-            });
+            typeof m._queue[m.name] == "function" && m._queue[m.name](this);
         }
     },
     destruct: function(){

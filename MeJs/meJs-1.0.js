@@ -126,14 +126,17 @@
             curCls["beDependent"].push(namespace);
         },
         get: function(namespace){
-            var nsArr = this.getnamespace(namespace), p = window;
+            var nsArr = this.getnamespace(namespace), p = window, namespaceArr = [];
             for (var i = 0; i < nsArr.length; i ++)
-                if (p[ nsArr[i].replace(/\s/g, "") ])
+                if (p[ nsArr[i].replace(/\s/g, "") ]) {
                     p = p[ nsArr[i].replace(/\s/g, "") ];
+                    namespaceArr.push(nsArr[i].replace(/\s/g, ""))
+                }
                 else if (i == 1 && window[ nsArr[i].replace(/\s/g, "") ])
                     return window[ nsArr[i].replace(/\s/g, "") ];
-                else
-                    return null;
+                else if (p)
+                    return p[namespace.replace(namespaceArr.join('.')+".","")];
+
             return p;
         },
         getConfig: function(name){
@@ -145,8 +148,8 @@
         },
         getAlias: function(alias, path){
             var cur = alias, arr = path.split('.');
-            if (cur[arr[arr.length - 1]])
-                return cur[arr[arr.length - 1]];
+//            if (cur[arr[arr.length - 1]])
+//                return cur[arr[arr.length - 1]];
             while(arr.length){
                 cur = cur[arr[0]];
                 arr.shift();
@@ -184,17 +187,21 @@
             })();
 
             me.fn.isString(curAlias) && arr.push(curPath + curAlias);
-            arr.length && p.preloader.newMe({
+            var preloader = null;
+            arr.length && (preloader = p.preloader.newMe({
                 obj:arr,
                 vesion: me.version,
                 onComplete: function(){
                     typeof callback == "function" && callback(me.modularity.get(name), objAlias);
+                    //preloader.destruct();
+                    //delete preloader;
                 },
                 onError: function(){
-                    //typeof callback == "function" && callback(null);
                     throw new Error(type+" module:"+" -> config:["+ cig.name +"] ->"+alias+" loading error!");
+                    //preloader.destruct();
+                    //delete preloader;
                 }
-            }).loading();
+            }).loading());
         },
         _inits : function(obj){
             //me.fn.inherit(obj, obj.parent);
@@ -219,8 +226,8 @@
                 var m = this, c = me.config, mode = me.modularity,configInfo = mode.getConfig(name),
                     modeObj = me.modularity.get(name);
 
-                modeObj && typeof callback == "function" && callback(modeObj);
-                !modeObj && (
+                modeObj && modeObj.isMeJs && typeof callback == "function" && callback(modeObj, objAlias);
+                (!modeObj || !modeObj.isMeJs) && (
                         !mode.loadingQueue[configInfo.config.name] && (mode.loadingQueue[configInfo.config.name] =  configInfo.config, mode.loadingQueue[configInfo.config.name].data = []),
                             mode.loadingQueue[configInfo.config.name].data.push({ alias: configInfo.alias, callback: callback, type: m.type, objAlias:objAlias })
                     );
@@ -253,6 +260,7 @@
                             var cur = curList[ki][ck];
                             window[ki].load(ki+"."+cur.alias, function (o, objAlias) {
                                 m[name][objAlias] = o;
+
                                 var beDep = me.modularity.getCls( m[name].namespace),namespace = m[name].imports[objAlias];
                                 if ((!o || !o.isMeJs)
                                     && beDep.dependent.indexOf(namespace) != -1){
@@ -291,18 +299,22 @@
             }
             for(var i in m.loadingQueue)
             {
-                var cur =m.loadingQueue[i];
+                var cur = m.loadingQueue[i], preloader = null;
                 !cur.isloading && (function (cur) {
-                    me.plugin.preloader.newMe({
+                    preloader = me.plugin.preloader.newMe({
                         obj: [cur.path],
                         async: false,
                         vesion: me.vesion,
                         onComplete: function () {
                             cur.isloading = true;
                             load(cur);
+                            //preloader.destruct();
+                            //delete preloader;
                         },
                         onError: function(){
                             cur.isloading = true;
+                            //preloader.destruct();
+                            //delete preloader;
                             throw new Error("File "+cur.path+" loading error.");
                         }
                     }).loading();
@@ -363,6 +375,7 @@
     namespace("me").extend("plugin", {
             construct: function(){
                 this.preloader.newMe = me.modularity._templateFun.newMe;
+                this.preloader.destruct = this.destruct;
             },
             preloader: {
                 namespace:"me.plugin.preloader",
@@ -401,7 +414,7 @@
                         me.fn.isOldWebKit && info.tag == "link" && setTimeout(callback, 20);
                         s.onload = s.onreadystatechange = function(event){
                             this.onerror = this.onabort = this.onload = null;
-                            if(! this.readyState  || this.readyState=='loaded' || this.readyState=='complete') {
+                            if(! this.readyState  || (this.readyState=='loaded' && me.fn.isIE10()) || this.readyState=='complete') {
                                 callback();
                             }
                         };
@@ -433,7 +446,10 @@
                 }
             },
             destruct: function(){
-
+                for(var i in this.params)
+                    delete this.params[i];
+                for(var j in this)
+                    delete this[i];
             }
     });
 })(window);
