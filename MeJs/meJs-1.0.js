@@ -50,8 +50,8 @@
         //
         newMe: function(o, n){
             var newObj = {}, m = this;
-            n && m.copy(o, n);
-            m.copy(newObj, o);
+            n && m.copy(newObj, o);
+            m.copy(newObj, n);
             return newObj;
         },
         _init: function(){
@@ -63,7 +63,8 @@
             };
             var _browser = function(t, v){
                 return function(){
-                    return $.browser[t] && ($.browser.version == v || v == "0");
+                    var curBrowserInfo = window.navigator.userAgent.toUpperCase();
+                    return curBrowserInfo.indexOf(t.toUpperCase()) != -1 && (curBrowserInfo.indexOf(v) != -1 || v == "0");
                 }
             };
             m.isObject = _isType("Object");
@@ -84,7 +85,9 @@
             m.isOldWebKit = +navigator.userAgent
                 .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536;
             m.isUrl = function(urlStr){
-                return new RegExp("^((https|http|ftp|rtsp|mms)://)?[a-z0-9A-Z]{3}\.[a-z0-9A-Z][a-z0-9A-Z]{0,61}?[a-z0-9A-Z]\.com|net|cn|cc (:s[0-9]{1-4})?/$").test(urlStr);
+                var strRegex = "^((https|http|ftp|rtsp|mms)?://)";
+                var reg = new RegExp(strRegex);
+                return reg.test(urlStr);
             }
             typeof Array.prototype.indexOf != "function" && (Array.prototype.indexOf = function(obj){
                 for (var i = 0; i < this.length; i ++)
@@ -187,21 +190,20 @@
             })();
 
             me.fn.isString(curAlias) && arr.push(curPath + curAlias);
-            var preloader = null;
-            arr.length && (preloader = p.preloader.newMe({
-                obj:arr,
-                vesion: me.version,
-                onComplete: function(){
-                    typeof callback == "function" && callback(me.modularity.get(name), objAlias);
-                    //preloader.destruct();
-                    //delete preloader;
-                },
-                onError: function(){
-                    throw new Error(type+" module:"+" -> config:["+ cig.name +"] ->"+alias+" loading error!");
-                    //preloader.destruct();
-                    //delete preloader;
-                }
-            }).loading());
+            arr.length && (function(){
+                p.preloader.newMe({
+                    obj:arr,
+                    vesion: me.version,
+                    onComplete: function(pre){
+                        typeof callback == "function" && callback(me.modularity.get(name), objAlias);
+                        //pre.destruct();
+                    },
+                    onError: function(){
+                        throw new Error(type+" module:"+" -> config:["+ cig.name +"] ->"+alias+" loading error!");
+                        //pre.destruct();
+                    }
+            }).loading()
+            })();
         },
         _inits : function(obj){
             //me.fn.inherit(obj, obj.parent);
@@ -217,6 +219,14 @@
                 }
             });
         },
+        isExistAlias: function(cigName, aliasName){
+            var cig = me.modularity.loadingQueue[cigName];
+            if (cig && cig.data)
+                for(var i = 0; i < cig.data.length; i ++)
+                    if (cig.data[i].alias == aliasName)
+                        return true;
+            return false;
+        },
         _templateFun: {
             params: null,
             newMe : function (opts) {
@@ -227,7 +237,8 @@
                     modeObj = me.modularity.get(name);
 
                 modeObj && modeObj.isMeJs && typeof callback == "function" && callback(modeObj, objAlias);
-                (!modeObj || !modeObj.isMeJs) && (
+                (!modeObj || !modeObj.isMeJs)
+                    && (
                         !mode.loadingQueue[configInfo.config.name] && (mode.loadingQueue[configInfo.config.name] =  configInfo.config, mode.loadingQueue[configInfo.config.name].data = []),
                             mode.loadingQueue[configInfo.config.name].data.push({ alias: configInfo.alias, callback: callback, type: m.type, objAlias:objAlias })
                     );
@@ -252,15 +263,13 @@
 
                 var loadImports = function(curList, count){
                     for(var ki in curList){
-                        if (!me.config.assemblies[ki])
+                        if (!me.config.assemblies[ki] && m.namespace.indexOf(ki) == -1)
                             throw new Error("Assemblies:"+ki+" not defind");
-
                         !window[ki] && namespace(ki);
                         for(var ck = 0; ck < curList[ki].length; ck ++) {
                             var cur = curList[ki][ck];
                             window[ki].load(ki+"."+cur.alias, function (o, objAlias) {
                                 m[name][objAlias] = o;
-
                                 var beDep = me.modularity.getCls( m[name].namespace),namespace = m[name].imports[objAlias];
                                 if ((!o || !o.isMeJs)
                                     && beDep.dependent.indexOf(namespace) != -1){
@@ -299,22 +308,20 @@
             }
             for(var i in m.loadingQueue)
             {
-                var cur = m.loadingQueue[i], preloader = null;
+                var cur = m.loadingQueue[i];
                 !cur.isloading && (function (cur) {
-                    preloader = me.plugin.preloader.newMe({
+                    me.plugin.preloader.newMe({
                         obj: [cur.path],
-                        async: false,
+                        //async: false,
                         vesion: me.vesion,
-                        onComplete: function () {
+                        onComplete: function (pre) {
                             cur.isloading = true;
                             load(cur);
-                            //preloader.destruct();
-                            //delete preloader;
+                            pre.destruct();
                         },
-                        onError: function(){
+                        onError: function(pre){
                             cur.isloading = true;
-                            //preloader.destruct();
-                            //delete preloader;
+                            pre.destruct();
                             throw new Error("File "+cur.path+" loading error.");
                         }
                     }).loading();
@@ -382,7 +389,7 @@
                 name:"preloader",
                 completed:null,
                 params: {
-                    isAsyn: false,
+                    isAsyn: true,
                     obj: undefined,
                     onProgress: undefined,
                     onComplete: undefined,
@@ -395,33 +402,40 @@
                         type:  fileType == "js" ? "text/javascript" : "stylesheet",
                         srcType: fileType == "js" ? "src" : "href"
                     };
-                    return function(self, src, size, vesion){
+                    return function(self, src, size){
                         var s = document.createElement(info.tag),
                             m = self,
                             o = m.params,
-                        //c = me.config,
                             fn = me.fn;
                         s[info.typeAttr] = info.type;
                         s.charset="utf-8"
                         s.async = o.isAsyn;
-                        s[info.srcType] =  src+ "?v=" + vesion;
+                        s[info.srcType] =  src;
                         var callback = function(type){
                             m.completed = m.completed || {};
                             m.completed[s[info.srcType]] = { size: size };
                             typeof o.onProgress == "function" && o.onProgress((size / o.totleSize) * 100, this.src, "js", type);
-                            fn.length(m.completed) == o.obj.length && typeof o.onComplete == "function" && o.onComplete();
+                            fn.length(m.completed) == o.obj.length && typeof o.onComplete == "function" && o.onComplete(self);
                         }
                         me.fn.isOldWebKit && info.tag == "link" && setTimeout(callback, 20);
                         s.onload = s.onreadystatechange = function(event){
                             this.onerror = this.onabort = this.onload = null;
-                            if(! this.readyState  || (this.readyState=='loaded' && me.fn.isIE10()) || this.readyState=='complete') {
+                            if((!this.readyState  && !me.fn.isIE())  || (this.readyState=='loaded' && !me.fn.isIE()) || this.readyState=='complete') {
                                 callback();
+                                window.console && window.console.log(this.readyState+":"+ (this.src || this.href).substring((this.src || this.href).lastIndexOf('/') + 1, (this.src || this.href).length))
                             }
                         };
                         s.onerror = function(r){
                             this.onerror = this.onabort = this.onload = null;
-                            typeof o.onError == "function" && o.onError();
+                            typeof o.onError == "function" && o.onError(this);
                         }
+                        var tags = document.getElementsByTagName(info.tag);
+                        for(var i = 0; i < tags.length; i ++)
+                            if (tags[i][info.srcType].indexOf(s[info.srcType].replace("../","")) != -1) {
+                                callback();
+                                return;
+                            }
+
                         var  firstScript = document.getElementsByTagName('script')[0];
                         firstScript.parentNode.insertBefore(s, firstScript);
                     }
@@ -429,19 +443,20 @@
                 loading: function(opts){
                     var m = this, fn = me.fn, p = m.params;
                     fn.isArray(m.params.obj) && fn.each(m.params.obj, function(i){
-                        fn.isString(m.params.obj[i]) && m.load(m.params.obj[i]);
-                        fn.isObject(m.params.obj[i]) && m.load(m.params.obj[i].path, m.params.obj[i].size);
+                        m.params.obj && fn.isString(m.params.obj[i]) && m.load(m.params.obj[i]);
+                        m.params.obj && fn.isObject(m.params.obj[i]) && m.load(m.params.obj[i].path, m.params.obj[i].size);
                     });
                     return this;
                 },
                 load: function(path, size){
                     var m = this,
-                        o = m.options,
+                        o = m.params,
                         fn = me.fn,
                         vesion = me.vesion,
-                        fileType = fn.filetype(path);
+                        fileType = fn.filetype(path),
+                        path = path + "?v=" + vesion;
                     !m["_load"+ fileType] && (m["_load"+fileType] = m._load(fileType));
-                    m["_load"+fileType](m, path, size, vesion);
+                    m["_load"+fileType](m, path, size);
                     return this;
                 }
             },
